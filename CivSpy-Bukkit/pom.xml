@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>civspy</artifactId>
-	<version>1.5.1</version>
+	<version>1.6.0</version>
 	<packaging>jar</packaging>
 	<name>CivSpy</name>
 	<url>https://github.com/DevotedMC/CivSpy</url>
@@ -38,16 +38,16 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.8.1</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>11</source>
+					<target>11</target>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.4.3</version>
+				<version>3.2.4</version>
 				<configuration>
 					<filters>
 						<filter>
@@ -70,11 +70,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
+				<version>3.2.0</version>
 				<configuration>
 					<outputDirectory>./apidocs</outputDirectory>
 					<notimestamp>true</notimestamp>
-					<source>8</source>
+					<source>11</source>
 				</configuration>
 				<executions>
 					<execution>
@@ -98,59 +98,59 @@
 		<dependency>
 			<groupId>vg.civcraft.mc.civmodcore</groupId>
 			<artifactId>CivModCore</artifactId>
-			<version>1.8.1</version>
+			<version>1.8.2D</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.programmerdan.minecraft</groupId>
 			<artifactId>civspy-api</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.devotedmc</groupId>
 			<artifactId>hiddenore</artifactId>
-			<version>1.7.1</version>
+			<version>1.7.2</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
+		<!--		<dependency>
 			<groupId>com.programmerdan.minecraft</groupId>
 			<artifactId>cropcontrol</artifactId>
 			<version>1.2.0</version>
 			<scope>provided</scope>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>com.devotedmc</groupId>
 			<artifactId>ExilePearl</artifactId>
 			<version>1.4.1</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>com.aleksey</groupId>
 			<artifactId>castlegates</artifactId>
 			<version>1.0.22-SNAPSHOT</version>
 			<scope>provided</scope>
-		</dependency>
+		</dependency>-->
 		<!--  Note: RecipeManager isn't distributed in POM form.
 					For this to build successfully, use install:install-file with
 					attributes as below. 
 					 mvn install:install-file -Dfile=RecipeManager.jar -DgroupId=haveric -DartifactId=recipeManager -Dversion=2.18 -Dpackaging=jar
 					-->
-		<dependency>
+		<!--<dependency>
 			<groupId>haveric</groupId>
 			<artifactId>recipeManager</artifactId>
 			<version>2.18</version>
 			<scope>compile</scope>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>vg.civcraft.mc.citadel</groupId>
 			<artifactId>Citadel</artifactId>
-			<version>4.1.1</version>
+			<version>4.1.1D</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>vg.civcraft.mc.namelayer</groupId>
-			<artifactId>NameLayer</artifactId>
-			<version>2.14.1</version>
+			<artifactId>namelayer-mc</artifactId>
+			<version>3.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

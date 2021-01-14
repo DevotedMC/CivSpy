@@ -6,7 +6,7 @@ Each abstract class defines two constructors but you don't have to implement for
 
 Samplers can declare their own period, but no guarantee is made in terms of ordering of execution or alignment of samplers; their executions may be offset, in some cases intentionally, even if their period is the same.
 
-<br/><hr/><br/>
+<br><hr><br>
 
 A quick introduction to samplers:
 
@@ -18,9 +18,9 @@ A Data Sampler should quickly sample one or more pieces of data and pass that da
 	<li> For Samplers that collect periodic data that should not be summation aggregated, use a {@link com.programmerdan.minecraft.civspy.PeriodicDataSample} POJO to store your samples.
 </ul>
 
-<br/>
+<br>
 
-<h4>Requirements</h4>
+<h3>Requirements</h3>
 
 All implementations of DataSampler must provide a <code>sample</code> implementation. 
 <ul>
@@ -37,9 +37,9 @@ All implementations of DataSampler must provide a constructor that takes a DataM
 	<li>If you want to override the default sample period of 1 minute (60,000 ms) call <code>setPeriod</code> from within your constructor. Subsequent calls to <code>setPeriod</code> will be ignored.
 </ul>
 
-<br/>
+<br>
 
-<h4>Usage</h4>
+<h3>Usage</h3>
 
 DataSamples are POJOs -- just construct them via their constructor and don't worry about anything else, they just hold and pass along data.
 
@@ -47,7 +47,7 @@ One parameter on all DataSample constructors is "Server" -- you can get the plug
 
 Your sampler can turn itself off by calling <code>deactivate</code> -- the sampler is still called on period, but your <code>sample</code> method won't be called, so only do so in case of exceptional circumstance; otherwise, leave activation and de-activation up to CivSpy's management routines.
 
-<hr/>
+<hr>
 
 That's basically it. Pick a Sampler base type to extend from -- either multi-sample or single-sample -- and enjoy.
 </BODY>
