@@ -348,7 +348,6 @@ public class Database {
 	 * @param statement
 	 * @return A PreparedStatement suitable for continued use
 	 */
-	@SuppressWarnings("resource")
 	public PreparedStatement batchData(String key, String server, String world, Integer chunk_x, Integer chunk_z, UUID uuid, 
 			String sValue, Number nValue, Long time, Connection connection, PreparedStatement statement) {
 		if (key == null) {

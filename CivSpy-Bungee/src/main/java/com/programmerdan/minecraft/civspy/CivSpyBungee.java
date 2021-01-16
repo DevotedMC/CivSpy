@@ -22,7 +22,6 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-import com.programmerdan.minecraft.civspy.CivSpyPlayerCount;
 import com.programmerdan.minecraft.civspy.database.Database;
 
 /**

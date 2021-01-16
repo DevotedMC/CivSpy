@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.BlockState;
@@ -12,8 +13,11 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BlockDataMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.CompassMeta;
+import org.bukkit.inventory.meta.CrossbowMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -23,7 +27,9 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.SuspiciousStewMeta;
 import org.bukkit.inventory.meta.TropicalFishBucketMeta;
+import org.bukkit.map.MapView;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 
@@ -32,7 +38,7 @@ public class ItemStackToString {
 	private ItemStackToString(){}
 
 	/**
-	 * For 1.13 ItemStacks.
+	 * For 1.16 ItemStacks.
 	 */
 	public static String toString(ItemStack itemStack) {
 		if (itemStack == null) {
@@ -94,6 +100,12 @@ public class ItemStackToString {
 					toString.deleteCharAt(toString.length() - 1);
 					toString.append(']');
  				}
+			} else if (meta instanceof BlockDataMeta) { // post 1.13
+				BlockDataMeta bdm = (BlockDataMeta) meta;
+				if (bdm.hasBlockData()) {
+					BlockData bd = bdm.getBlockData(material);
+					toString.append('/').append(bd != null ? bd.getAsString() : "Empty");
+				}
 			} else if (meta instanceof BlockStateMeta) {
 				BlockStateMeta bsm = (BlockStateMeta) meta;
 				if (bsm.hasBlockState()) {
@@ -107,8 +119,33 @@ public class ItemStackToString {
 						toString.append(nk.toString()).append('|');
 					}
 					toString.deleteCharAt(toString.length() - 1);
+					toString.append(']');
 				}
-				toString.append(']');
+			} else if (meta instanceof CompassMeta) { // after 1.13
+				CompassMeta compassmeta = (CompassMeta) meta;
+				toString.append(compassmeta.hasLodestone() ? "_paired_" : "_unpaired_")
+					.append(compassmeta.isLodestoneTracked() ? "tracked" : "untracked");
+				if (compassmeta.hasLodestone()) {
+					Location lodestone = compassmeta.getLodestone();
+					if (lodestone != null) {
+						toString.append("<").append(lodestone.getWorld().getName())
+							.append(",").append(lodestone.getBlockX())
+							.append(",").append(lodestone.getBlockY())
+							.append(",").append(lodestone.getBlockZ()).append(">");
+					}
+				}
+			} else if (meta instanceof CrossbowMeta) { // after 1.13
+				CrossbowMeta crossbowMeta = (CrossbowMeta) meta;
+				toString.append("_Charged[");
+				if (crossbowMeta.hasChargedProjectiles()) {
+					for (ItemStack charged : crossbowMeta.getChargedProjectiles()) {
+						toString.append(toString(charged)).append('|');
+					}
+					toString.deleteCharAt(toString.length() - 1);
+					toString.append(']');
+				} else {
+					toString.append("empty]");
+				}
 			} else if (meta instanceof BookMeta) {
 				BookMeta bookmeta = (BookMeta) meta;
 				toString.append('/');
@@ -156,6 +193,13 @@ public class ItemStackToString {
 				toString.append('/').append("Color:").append(((LeatherArmorMeta) meta).getColor().toString());
 			} else if (meta instanceof MapMeta) {
 				MapMeta mmeta = (MapMeta) meta;
+				if (mmeta.hasMapView()) {
+					toString.append("_View");
+					MapView view = mmeta.getMapView();
+					if (view != null) {
+						toString.append(view.getId());
+					}
+				}
 				if (mmeta.hasLocationName()) {
 					toString.append("_").append(mmeta.getLocationName());
 				}
@@ -203,13 +247,34 @@ public class ItemStackToString {
 						.append("_Pattern:").append(bucket.getPattern() == null ? "null" : bucket.getPattern().toString())
 						.append("_PatColor:").append(bucket.getPatternColor() == null ? "null" : bucket.getPatternColor().toString());
 				}
+			} else if (meta instanceof SuspiciousStewMeta) { // after 1.13
+				SuspiciousStewMeta ssm = (SuspiciousStewMeta) meta;
+				if (ssm.hasCustomEffects()) {
+					toString.append('[');
+					for (PotionEffect effect : ssm.getCustomEffects()){
+						toString.append(effect.getType().getName())
+								.append("x").append(effect.getAmplifier())
+								.append("t").append(effect.getDuration())
+								.append("c").append(effect.getType().getColor());
+						if (effect.isAmbient()) {
+							toString.append('/').append("Ambient");
+						} else if (effect.hasParticles()) {
+							toString.append('/').append("Particles");
+						}
+						toString.append('|');
+					}
+					toString.deleteCharAt(toString.length() - 1);
+					toString.append(']');
+				}
+
 			}
 		}
 		
 		return toString.toString();
 	}
 	
-	/**
+	
+	/*
 	 * For 1.13
 	 * @param block
 	 * @return
@@ -222,6 +287,7 @@ public class ItemStackToString {
 		BlockData data = block.getBlockData();
 		
 		return data.getAsString(); // Should be best
+		
 		
 /*		if (data instanceof Directional && ((Directional) data).getFacing() != null) {
 			toString.append(((Directional) data).getFacing().toString()).append("_");
