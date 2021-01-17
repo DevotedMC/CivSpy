@@ -8,6 +8,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,6 +17,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -37,6 +40,13 @@ import com.programmerdan.minecraft.civspy.util.ItemStackToString;
  * 
  * Contributes <code>player.open</code> when a player opens an inventory holder.
  * String value is the TYPE of inventory opened.
+ * 
+ * Contributes <code>armorstand.slot.ACTION</code> data when a player interacts with an armor stand.
+ * ACTION is SWAP, RETRIEVE, or PLACE depending on the nature of a player's interaction with it.
+ * String value is the actual slot interacted with on the stand.
+ * Location items is location of the stand.
+ * Contributes <code>armorstand.item.stand</code>, String and Number is the item in the stand, if any
+ * Contributes <code>armorstand.item.player</code>, String and Number is the item in the player, if any 
  * 
  * @author ProgrammerDan
  *
@@ -289,6 +299,70 @@ public class InventoryListener extends ServerDataListener {
 			return "Unknown";
 		} else {
 			return type.getDefaultTitle();
+		}
+	}
+	
+	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
+	public void armorStandManipulation(PlayerArmorStandManipulateEvent standEvent) {
+		try {
+			//armorstand.slot.ACTION -- simple assumptions:
+			//    if stand holds & player holds, SWAP
+			//    if stand holds & player doesn't, RETRIEVE
+			//    if stand doesn't & player holds, PLACE
+			//armorstand.item.stand
+			//armorstand.item.player
+			Player player = standEvent.getPlayer();
+			ItemStack playerItem = standEvent.getPlayerItem();
+			ItemStack standItem = standEvent.getArmorStandItem();
+			
+			if (player == null ) {
+				logger.log(Level.WARNING, "Player was null in armor stand?");
+				return;
+			}
+			if ( Material.AIR.equals(playerItem.getType()) 
+					&& Material.AIR.equals(standItem.getType()) ) {
+				return; // nothing to record.
+			}
+			
+			String action = Material.AIR.equals(playerItem.getType()) ? "RETRIEVE" :
+				Material.AIR.equals(standItem.getType()) ? "PLACE" : "SWAP";
+			
+			EquipmentSlot slot = standEvent.getSlot();
+			
+			Location location = standEvent.getRightClicked().getLocation();
+			
+			Chunk chunk = location.getChunk();
+			
+			String world = location.getWorld().getName();
+			
+			UUID id = player.getUniqueId();
+			
+			DataSample slotData = new PointDataSample("armorstand.slot." + action, this.getServer(),
+					chunk.getWorld().getName(), id, chunk.getX(), chunk.getZ(),
+					slot.toString());
+			this.record(slotData);
+			
+			if (!Material.AIR.equals(playerItem.getType())) {
+				ItemStack playerClone = playerItem.clone();
+				playerClone.setAmount(1);
+				
+				DataSample playerData = new PointDataSample("armorstand.item.player", this.getServer(),
+						chunk.getWorld().getName(), id, chunk.getX(), chunk.getZ(),
+						ItemStackToString.toString(playerClone), playerItem.getAmount());
+				this.record(playerData);
+			}
+			
+			if (!Material.AIR.equals(standItem.getType())) {
+				ItemStack standClone = standItem.clone();
+				standClone.setAmount(1);
+				
+				DataSample standData = new PointDataSample("armorstand.item.stand", this.getServer(),
+						chunk.getWorld().getName(), id, chunk.getX(), chunk.getZ(),
+						ItemStackToString.toString(standClone), standItem.getAmount());
+				this.record(standData);
+			}
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Failed to spy an armor stand event", e);
 		}
 	}
 }

@@ -35,6 +35,9 @@ import com.programmerdan.minecraft.civspy.util.ItemStackToString;
  * <code>player.damaged</code> with string_value being the nature of the damage received,
  * and numeric_value the damage amount.
  * 
+ * TODO: Combust Handling, AoE effect handling, Lingering potion handling,
+ * Potion Splash handler, 
+ * 
  * @author <a href="mailto:programmerdan@gmail.com">ProgrammerDan</a>
  */
 public final class CombatListener extends ServerDataListener {
@@ -88,6 +91,7 @@ public final class CombatListener extends ServerDataListener {
 		doDamage(whoGotHurt, event);
 	}
 	
+	// TODO: LightningStrike??
 	private void doDamage(Entity whoGotHurt, EntityDamageEvent event) {
 		HumanEntity p = (HumanEntity) whoGotHurt;
 		UUID id = p.getUniqueId();

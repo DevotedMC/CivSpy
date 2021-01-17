@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Hopper;
+import org.bukkit.block.Lectern;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -16,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
+import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -33,6 +35,9 @@ import com.programmerdan.minecraft.civspy.util.ItemStackToString;
  * <br><br>
  * Contributes <code>inventory.pickup.TYPE</code> when an inventory holder picks up an item.
  * TYPE is the Hopper or HopperMinecart that picked up the item.
+ * <br><br>
+ * Contributes <code>lectern.take</code> when a player takes a book from a lectern.
+ * The String and value relate to the book taken from the lectern.
  * 
  * @author ProgrammerDan
  *
@@ -130,6 +135,31 @@ public class PickupListener extends ServerDataListener {
 			this.record(rpick);
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Failed to spy an inventory pickup event", e);
+		}
+	}
+	
+	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
+	public void takeLecternEvent(PlayerTakeLecternBookEvent event) {
+		try {
+			Lectern lectern = event.getLectern();
+			
+			ItemStack book = event.getBook();
+			if (book == null) {
+				return; // event considers it nullable
+			}
+			
+			Location location = lectern.getLocation();
+			Chunk chunk = location.getChunk();
+			
+			ItemStack clone = book.clone();
+			clone.setAmount(1);
+			
+			DataSample lect = new PointDataSample("lectern.take", this.getServer(),
+					chunk.getWorld().getName(), null, chunk.getX(), chunk.getZ(), 
+					ItemStackToString.toString(clone), book.getAmount());
+			this.record(lect);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Failed to spy a lectern event", e);
 		}
 	}
 }

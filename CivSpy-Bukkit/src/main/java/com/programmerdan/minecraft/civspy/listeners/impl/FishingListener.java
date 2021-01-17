@@ -22,7 +22,7 @@ import com.programmerdan.minecraft.civspy.listeners.ServerDataListener;
 import com.programmerdan.minecraft.civspy.util.ItemStackToString;
 
 /**
- * Contributes player.fishing tracking data, records location, player, and item / amount retrieved.
+ * Contributes <code>player.fishing</code> tracking data, records location, player, and item / amount retrieved.
  * 
  * @author ProgrammerDan
  *
