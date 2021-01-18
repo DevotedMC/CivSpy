@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +28,7 @@ import com.programmerdan.minecraft.civspy.util.ItemStackToString;
  * This only records _player_ breaks, so if other entities cause a break those events are
  * ignored.
  * 
- * For 1.16, record harvest events too.
+ * For 1.16, record harvest events too, and tool break events.
  * 
  * @author ProgrammerDan
  */
@@ -128,4 +129,36 @@ public final class BreakListener extends ServerDataListener {
 		}
 	}
 
+	/**
+	 * Generates a <code>player.item.break</code> when a player's in-use item breaks.
+	 * The String / Number values will represent the item that was broken.
+	 * 
+	 * @param event the break event.
+	 */
+	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
+	public void toolBreakListen(PlayerItemBreakEvent event) {
+		try {
+			Player p = event.getPlayer();
+			if (p == null) {
+				return;
+			}
+			UUID id = p.getUniqueId();
+			Chunk chunk = p.getChunk();
+			
+			ItemStack broke = event.getBrokenItem();
+			if (broke == null) {
+				return;
+			}
+			ItemStack brokeQ = broke.clone();
+			brokeQ.setAmount(1);
+			
+			DataSample breakDS = new PointDataSample("player.item.break",
+					this.getServer(), chunk.getWorld().getName(), id, chunk.getX(), chunk.getZ(), 
+					ItemStackToString.toString(brokeQ), broke.getAmount());
+			this.record(breakDS);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Failed to spy a tool break event", e);
+		}
+	}
+	
 }

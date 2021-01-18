@@ -148,22 +148,7 @@ public class ItemStackToString {
 				}
 			} else if (meta instanceof BookMeta) {
 				BookMeta bookmeta = (BookMeta) meta;
-				toString.append('/');
-				if (bookmeta.hasTitle()) {
-					toString.append('"');
-					toString.append(bookmeta.getTitle());
-					toString.append('"');
-				}
-				if (bookmeta.hasAuthor()) {
-					toString.append("by_").append(bookmeta.getAuthor());
-				}
-				if (bookmeta.hasGeneration()) {
-					if (bookmeta.getGeneration() != BookMeta.Generation.ORIGINAL)
-					toString.append("_").append(bookmeta.getGeneration().toString());
-				}
-				if (bookmeta.hasPages()) {
-					toString.append("_").append(bookmeta.getPageCount()).append("pgs");
-				}
+				toString.append(toString(bookmeta));
 			} else if (meta instanceof EnchantmentStorageMeta) {
 				toString.append("_Stored");
 				toString.append('[');
@@ -270,6 +255,27 @@ public class ItemStackToString {
 			}
 		}
 		
+		return toString.toString();
+	}
+
+	public static String toString(BookMeta bookmeta) {
+		StringBuilder toString = new StringBuilder();
+		toString.append('/');
+		if (bookmeta.hasTitle()) {
+			toString.append('"');
+			toString.append(bookmeta.getTitle());
+			toString.append('"');
+		}
+		if (bookmeta.hasAuthor()) {
+			toString.append("by_").append(bookmeta.getAuthor());
+		}
+		if (bookmeta.hasGeneration()) {
+			if (bookmeta.getGeneration() != BookMeta.Generation.ORIGINAL)
+			toString.append("_").append(bookmeta.getGeneration().toString());
+		}
+		if (bookmeta.hasPages()) {
+			toString.append("_").append(bookmeta.getPageCount()).append("pgs");
+		}
 		return toString.toString();
 	}
 	
