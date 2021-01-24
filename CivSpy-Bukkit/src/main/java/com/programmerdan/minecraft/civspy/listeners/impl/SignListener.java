@@ -11,14 +11,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerBedLeaveEvent;
 
 import com.programmerdan.minecraft.civspy.DataManager;
 import com.programmerdan.minecraft.civspy.DataSample;
 import com.programmerdan.minecraft.civspy.PointDataSample;
 import com.programmerdan.minecraft.civspy.listeners.ServerDataListener;
-import com.programmerdan.minecraft.civspy.util.ItemStackToString;
 
 /**
  * Contributes <code>player.sign.change</code> including the text of the sign. 

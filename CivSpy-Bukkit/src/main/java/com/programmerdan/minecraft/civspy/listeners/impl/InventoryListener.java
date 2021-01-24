@@ -338,7 +338,7 @@ public class InventoryListener extends ServerDataListener {
 			UUID id = player.getUniqueId();
 			
 			DataSample slotData = new PointDataSample("armorstand.slot." + action, this.getServer(),
-					chunk.getWorld().getName(), id, chunk.getX(), chunk.getZ(),
+					world, id, chunk.getX(), chunk.getZ(),
 					slot.toString());
 			this.record(slotData);
 			
@@ -347,7 +347,7 @@ public class InventoryListener extends ServerDataListener {
 				playerClone.setAmount(1);
 				
 				DataSample playerData = new PointDataSample("armorstand.item.player", this.getServer(),
-						chunk.getWorld().getName(), id, chunk.getX(), chunk.getZ(),
+						world, id, chunk.getX(), chunk.getZ(),
 						ItemStackToString.toString(playerClone), playerItem.getAmount());
 				this.record(playerData);
 			}
@@ -357,7 +357,7 @@ public class InventoryListener extends ServerDataListener {
 				standClone.setAmount(1);
 				
 				DataSample standData = new PointDataSample("armorstand.item.stand", this.getServer(),
-						chunk.getWorld().getName(), id, chunk.getX(), chunk.getZ(),
+						world, id, chunk.getX(), chunk.getZ(),
 						ItemStackToString.toString(standClone), standItem.getAmount());
 				this.record(standData);
 			}

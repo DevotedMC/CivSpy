@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -143,7 +144,8 @@ public final class BreakListener extends ServerDataListener {
 				return;
 			}
 			UUID id = p.getUniqueId();
-			Chunk chunk = p.getChunk();
+			Location loc = p.getLocation();
+			Chunk chunk = loc.getChunk();
 			
 			ItemStack broke = event.getBrokenItem();
 			if (broke == null) {

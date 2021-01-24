@@ -6,8 +6,6 @@ import java.util.logging.Logger;
 
 import org.bukkit.Art;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.HumanEntity;
@@ -17,12 +15,9 @@ import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
-import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerBedLeaveEvent;
 
 import com.programmerdan.minecraft.civspy.DataManager;
 import com.programmerdan.minecraft.civspy.DataSample;
@@ -56,7 +51,7 @@ public class HangingListener extends ServerDataListener {
 			String type = player != null ? "PLAYER" : "UNKNOWN";
 			Hanging hanging = event.getEntity();
 			
-			Chunk chunk = hanging.getChunk();
+			Chunk chunk = hanging.getLocation().getChunk();
 			
 			StringBuilder sb = new StringBuilder(hanging.getType().toString());
 			sb.append('_').append(hanging.getFacing().toString());
@@ -89,7 +84,7 @@ public class HangingListener extends ServerDataListener {
 			}
 			Hanging hanging = event.getEntity();
 			
-			Chunk chunk = hanging.getChunk();
+			Chunk chunk = hanging.getLocation().getChunk();
 			
 			StringBuilder sb = new StringBuilder(hanging.getType().toString());
 			sb.append('_').append(hanging.getFacing().toString());
@@ -123,7 +118,7 @@ public class HangingListener extends ServerDataListener {
 			
 			Hanging hanging = event.getEntity();
 			
-			Chunk chunk = hanging.getChunk();
+			Chunk chunk = hanging.getLocation().getChunk();
 			
 			StringBuilder sb = new StringBuilder(hanging.getType().toString());
 			sb.append('_').append(hanging.getFacing().toString());

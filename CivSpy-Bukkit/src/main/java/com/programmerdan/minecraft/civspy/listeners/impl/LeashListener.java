@@ -44,7 +44,7 @@ public class LeashListener extends ServerDataListener {
 
 			Entity entity = event.getEntity();
 			
-			Chunk chunk = entity.getChunk();
+			Chunk chunk = entity.getLocation().getChunk();
 			
 			DataSample unleash = new PointDataSample("player.unleash." + event.getReason().toString(),
 					this.getServer(), chunk.getWorld().getName(), uuid, chunk.getX(), chunk.getZ(), 

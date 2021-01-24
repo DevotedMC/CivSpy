@@ -5,17 +5,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockShearEntityEvent;
-import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
-import org.bukkit.inventory.ItemStack;
 
 import com.programmerdan.minecraft.civspy.DataManager;
 import com.programmerdan.minecraft.civspy.DataSample;
@@ -56,7 +52,7 @@ public class ShearListener extends ServerDataListener {
 			
 			Entity sheared = event.getEntity();
 			
-			Chunk chunk = sheared.getChunk();
+			Chunk chunk = sheared.getLocation().getChunk();
 			
 			DataSample shearGen = new PointDataSample("player.shear", this.getServer(),
 					chunk.getWorld().getName(), id, chunk.getX(), chunk.getZ(), 
@@ -80,7 +76,7 @@ public class ShearListener extends ServerDataListener {
 			
 			Entity sheared = event.getEntity();
 			
-			Chunk chunk = sheared.getChunk();
+			Chunk chunk = sheared.getLocation().getChunk();
 			
 			DataSample shearGen = new PointDataSample("block.shear." + sheared.getType(), this.getServer(),
 					chunk.getWorld().getName(), null, chunk.getX(), chunk.getZ(), 

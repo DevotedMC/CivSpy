@@ -59,6 +59,13 @@ public class PickupListener extends ServerDataListener {
 		// no-op
 	}
 
+	/**
+	 * Please note that this event handler will only work for PAPER. The
+	 * Spigot event has an .getItem() deprecated but does not provide a non-deprecated replacement.
+	 * Very silly.... Paper does not have this defect.
+	 * 
+	 * @param event
+	 */
 	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 	public void playerPickupArrow(PlayerPickupArrowEvent event) {
 		try {
@@ -87,6 +94,7 @@ public class PickupListener extends ServerDataListener {
 			}
 			Chunk chunk = location.getChunk();
 			
+			// PAPER ONLY
 			ItemStack pick = toPick.getItemStack();
 			if (pick == null) {
 				return;

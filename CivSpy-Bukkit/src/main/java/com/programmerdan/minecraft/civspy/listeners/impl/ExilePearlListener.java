@@ -85,7 +85,7 @@ public class ExilePearlListener extends ServerDataListener {
 			Chunk chunk = pearl.getLocation() != null ? pearl.getLocation().getChunk() : 
 					null;
 			if (chunk == null) { // if we don't have a pearl location, use the summoner's location. Closest proxy.
-				chunk = summoner.getChunk();
+				chunk = summoner.getLocation().getChunk();
 			}
 			
 			DataSample rmove = new PointDataSample("exilepearl.summoned", this.getServer(),

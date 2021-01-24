@@ -5,17 +5,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
@@ -24,7 +19,6 @@ import com.programmerdan.minecraft.civspy.DataManager;
 import com.programmerdan.minecraft.civspy.DataSample;
 import com.programmerdan.minecraft.civspy.PointDataSample;
 import com.programmerdan.minecraft.civspy.listeners.ServerDataListener;
-import com.programmerdan.minecraft.civspy.util.ItemStackToString;
 
 /**
  * <code>vehicle.enter.TYPE</code> and <code>vehicle.exit.TYPE</code> and <code>vehicle.destroy.TYPE</code>.
@@ -58,7 +52,7 @@ public class VehicleListener extends ServerDataListener {
 				HumanEntity player = (HumanEntity) entity;
 				uuid = player.getUniqueId();
 			}
-			Chunk chunk = vehicle.getChunk();
+			Chunk chunk = vehicle.getLocation().getChunk();
 			
 			DataSample enter = new PointDataSample("vehicle.enter." + vehicleType,
 					this.getServer(), chunk.getWorld().getName(), uuid, chunk.getX(), chunk.getZ(), 
@@ -82,7 +76,7 @@ public class VehicleListener extends ServerDataListener {
 				HumanEntity player = (HumanEntity) entity;
 				uuid = player.getUniqueId();
 			}
-			Chunk chunk = vehicle.getChunk();
+			Chunk chunk = vehicle.getLocation().getChunk();
 			
 			DataSample enter = new PointDataSample("vehicle.exit." + vehicleType,
 					this.getServer(), chunk.getWorld().getName(), uuid, chunk.getX(), chunk.getZ(), 
@@ -106,7 +100,7 @@ public class VehicleListener extends ServerDataListener {
 				HumanEntity player = (HumanEntity) entity;
 				uuid = player.getUniqueId();
 			}
-			Chunk chunk = vehicle.getChunk();
+			Chunk chunk = vehicle.getLocation().getChunk();
 			
 			DataSample enter = new PointDataSample("vehicle.destroy." + vehicleType,
 					this.getServer(), chunk.getWorld().getName(), uuid, chunk.getX(), chunk.getZ(), 

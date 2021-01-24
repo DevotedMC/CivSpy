@@ -219,7 +219,7 @@ public final class HuntingListener extends ServerDataListener {
 					if (block != null) {
 						killerName = ItemStackToString.toString(block.getState());
 					} else {
-						killerName = "Block";
+						killerName = "Block:" + edbe.getCause().toString();
 					}
 				} else {
 					killerName = lastDamage.getCause().toString();
