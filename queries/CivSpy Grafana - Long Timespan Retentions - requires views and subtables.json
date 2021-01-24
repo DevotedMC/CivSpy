@@ -1,0 +1,420 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_CIVSPY",
+      "label": "CivSpy",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "mysql",
+      "pluginName": "MySQL"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "4.4.3"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "heatmap",
+      "name": "Heatmap",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "mysql",
+      "name": "MySQL",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "hideControls": false,
+  "id": null,
+  "links": [],
+  "rows": [
+    {
+      "collapse": false,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_CIVSPY}",
+          "description": "Measures in a way the success of retention",
+          "fill": 1,
+          "id": 1,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": true,
+            "max": true,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "rawSql": "select b.time_sec, d.value, b.metric from \n(select distinct unix_timestamp(date(stat_time)) as time_sec, metric from spy_stats_all_weeks_login join (select 'a 1' as metric union select 'b 2' union select 'c 3' union select 'd 4' union select 'e 5' union select 'f 6'\n union select 'g 7-13' union select 'h 14-27' union select 'i 28-55' union select 'j 56+') c ) b \nleft join\n(SELECT\n  UNIX_TIMESTAMP(day) as time_sec,\n  count(*) as value,\n  (case when visit_no  = 1 then 'a 1' \n    when visit_no = 2 then 'b 2'\n    when visit_no = 3 then 'c 3'\n    when visit_no = 4 then 'd 4'\n    when visit_no = 5 then 'e 5'\n    when visit_no = 6 then 'f 6'\n    when visit_no >= 7 and visit_no < 14 then 'g 7-13' \n    when visit_no >= 14 and visit_no < 28 then 'h 14-27' \n    when visit_no >= 28 and visit_no < 56 then 'i 28-55'\n    else 'j 56+' end\n  ) as metric\nFROM (\n select rank() over (partition by uuid order by date(stat_time)) as visit_no,\n  date(stat_time) as day, uuid\n from spy_stats_all_weeks_login\n where $__timeFilter(stat_time)\n group by date(stat_time), uuid\n order by date(stat_time), uuid) a\ngroup by time_sec, metric\n) d\non b.time_sec = d.time_sec and b.metric = d.metric\norder by b.time_sec asc, b.metric asc;",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Players by rejoin count / day",
+          "tooltip": {
+            "shared": false,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+              "total"
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 250,
+      "panels": [
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolatePurples",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "timeseries",
+          "description": "By join day and by how long they wound up playing.",
+          "heatmap": {},
+          "highlightCards": true,
+          "id": 2,
+          "links": [],
+          "span": 6,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "rawSql": "SELECT\n  UNIX_TIMESTAMP(m_stat_time) as time_sec,\n  t_time as value,\n  'Join' as metric\nFROM (SELECT min(stat_time) as m_stat_time, sum(numeric_value) as t_time, uuid from spy_stats_all_weeks_session group by uuid) a\nwhere $__timeFilter( m_stat_time )\norder by m_stat_time asc;",
+              "refId": "A"
+            }
+          ],
+          "title": "New Joins & How long they stayed",
+          "tooltip": {
+            "show": true,
+            "showHistogram": true
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": "1w",
+          "yAxis": {
+            "decimals": null,
+            "format": "dtdurationms",
+            "logBase": 10,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null
+          },
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolatePurples",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "timeseries",
+          "description": "By final date of play and by how long they wound up playing before then",
+          "heatmap": {},
+          "highlightCards": true,
+          "id": 3,
+          "links": [],
+          "span": 6,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "rawSql": "SELECT\n  UNIX_TIMESTAMP(m_stat_time) as time_sec,\n  t_time as value,\n  'Join' as metric\nFROM (SELECT max(stat_time) as m_stat_time, sum(numeric_value) as t_time, uuid from spy_stats_all_weeks_session group by uuid) a\nwhere $__timeFilter( m_stat_time )\norder by m_stat_time asc;",
+              "refId": "A"
+            }
+          ],
+          "title": "Final joins & How long they stayed",
+          "tooltip": {
+            "show": true,
+            "showHistogram": true
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": "1w",
+          "yAxis": {
+            "decimals": null,
+            "format": "dtdurationms",
+            "logBase": 10,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null
+          },
+          "yBucketNumber": null,
+          "yBucketSize": null
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 250,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_CIVSPY}",
+          "description": "First join / final join by day",
+          "fill": 0,
+          "id": 4,
+          "legend": {
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Avg Join",
+              "color": "#3F6833",
+              "fill": 0,
+              "linewidth": 3,
+              "yaxis": 2,
+              "zindex": -3
+            },
+            {
+              "alias": "Avg Leave",
+              "color": "#967302",
+              "fill": 0,
+              "linewidth": 3,
+              "yaxis": 2,
+              "zindex": -2
+            }
+          ],
+          "spaceLength": 10,
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "rawSql": "SELECT\n  UNIX_TIMESTAMP(m_stat_time) as time_sec,\n  count(distinct uuid) as value,\n  'Join' as metric\nFROM (SELECT min(date(stat_time)) as m_stat_time, uuid from spy_stats_all_weeks_session group by uuid) a\nwhere $__timeFilter( m_stat_time )\ngroup by m_stat_time\norder by m_stat_time asc;\n",
+              "refId": "A"
+            },
+            {
+              "alias": "",
+              "format": "time_series",
+              "rawSql": "SELECT\n  UNIX_TIMESTAMP(m_stat_time) as time_sec,\n  count(distinct uuid) as value,\n  'Leave' as metric\nFROM (SELECT max(date(stat_time)) as m_stat_time, uuid from spy_stats_all_weeks_session group by uuid) a\nwhere $__timeFilter( m_stat_time )\ngroup by m_stat_time\norder by m_stat_time asc;",
+              "refId": "B"
+            },
+            {
+              "alias": "",
+              "format": "time_series",
+              "rawSql": "SELECT\n  UNIX_TIMESTAMP(w_stat_time) as time_sec,\n  count(distinct uuid)/7 as value,\n  'Avg Join' as metric\nFROM (SELECT DATE_SUB(min(date(stat_time)), INTERVAL DAYOFWEEK(min(date(stat_time)))-1 DAY) as w_stat_time, uuid from spy_stats_all_weeks_session group by uuid) a\nwhere $__timeFilter( w_stat_time )\ngroup by w_stat_time\norder by w_stat_time asc;",
+              "refId": "C"
+            },
+            {
+              "alias": "",
+              "format": "time_series",
+              "rawSql": "SELECT\n  UNIX_TIMESTAMP(w_stat_time) as time_sec,\n  count(distinct uuid)/7 as value,\n  'Avg Leave' as metric\nFROM (SELECT DATE_SUB(max(date(stat_time)), INTERVAL DAYOFWEEK(max(date(stat_time)))-1 DAY) as w_stat_time, uuid from spy_stats_all_weeks_session group by uuid) a\nwhere $__timeFilter( w_stat_time )\ngroup by w_stat_time\norder by w_stat_time asc;",
+              "refId": "D"
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "critical",
+              "fill": true,
+              "line": true,
+              "op": "lt",
+              "value": 10
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Moving points of count of joins and departures by day",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "",
+              "logBase": 2,
+              "max": "512",
+              "min": "4",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": "",
+              "logBase": 2,
+              "max": "512",
+              "min": "4",
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    }
+  ],
+  "schemaVersion": 14,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "2016-09-17T04:00:00.000Z",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "Retentions",
+  "version": 2
+}
